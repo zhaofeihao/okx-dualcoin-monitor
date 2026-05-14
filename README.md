@@ -1,6 +1,6 @@
 # OKX Dualcoin Monitor
 
-TypeScript service for monitoring OKX Dual Investment ETH/USDT Buy Low opportunities. It records product snapshots in SQLite, detects APR anomalies by strike and expiry, and sends Telegram alerts. The MVP is monitoring-only and does not place orders.
+TypeScript service for monitoring OKX Dual Investment ETH/USDT Buy Low opportunities and OKX USDT-margined perpetual funding-rate extremes. It records Dual Investment product snapshots in SQLite, detects APR anomalies by strike and expiry, and sends Telegram alerts. It also polls public perpetual funding rates and sends a summary when `|fundingRate|` is above the configured threshold. The service is monitoring-only and does not place orders.
 
 ## Setup
 
@@ -20,6 +20,14 @@ Key settings:
 - `STRATEGY_MIN_TERM_DAYS` / `STRATEGY_MAX_TERM_DAYS`: allowed expiry range.
 - `STRATEGY_ALERT_ZSCORE`: z-score alert threshold.
 - `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`: optional. If absent, alerts are logged instead of sent.
+
+Funding-rate settings:
+
+- `FUNDING_RATE_ENABLED`: enable/disable OKX perpetual funding-rate monitoring. Defaults to `true`.
+- `FUNDING_RATE_INTERVAL_MINUTES`: funding-rate polling interval. Defaults to `30`.
+- `FUNDING_RATE_THRESHOLD_PCT`: alert threshold in percentage points. `0.3` means `0.3%`; OKX API value `0.003` is displayed as `0.3%`.
+- `FUNDING_RATE_QUOTE_CCY`: quote currency to monitor. Defaults to `USDT`; the first version only scans USDT-margined linear swaps.
+- `FUNDING_RATE_TOP_N`: maximum number of contracts included in one Telegram summary.
 
 ## Run Once
 
@@ -63,9 +71,12 @@ Tables:
 - `dual_investment_quotes`: every 15-minute product snapshot.
 - `dual_investment_alerts`: deduplicated alert records.
 
+Funding-rate alerts are not persisted in SQLite in this version. Each funding-rate cycle sends at most one summary message when matching contracts exist.
+
 ## Notes
 
 - Buy Low maps to OKX Dual Investment `optType=P`.
 - Spot price is fetched from `GET /api/v5/market/ticker?instId=ETH-USDT`.
 - Product snapshots are fetched from `GET /api/v5/finance/sfp/dcd/products?baseCcy=ETH&quoteCcy=USDT&optType=P`; OKX currently requires signed API headers for this endpoint.
+- USDT perpetual instruments are fetched from `GET /api/v5/public/instruments?instType=SWAP`, then current funding is fetched from `GET /api/v5/public/funding-rate?instId=...`.
 - The service intentionally avoids OKX trading endpoints in the MVP.

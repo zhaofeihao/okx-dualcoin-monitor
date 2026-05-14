@@ -1,5 +1,5 @@
 import "dotenv/config";
-import type { AppConfig, Direction, StrategyConfig } from "./types.js";
+import type { AppConfig, Direction, FundingRateConfig, StrategyConfig } from "./types.js";
 
 type Env = Record<string, string | undefined>;
 
@@ -18,6 +18,14 @@ const DEFAULT_STRATEGY: StrategyConfig = {
   rankingTopN: 3
 };
 
+const DEFAULT_FUNDING_RATE: FundingRateConfig = {
+  enabled: true,
+  intervalMinutes: 30,
+  thresholdPct: 0.3,
+  quoteCcy: "USDT",
+  topN: 20
+};
+
 function parseNumber(env: Env, key: string, fallback: number): number {
   const value = env[key];
   if (value === undefined || value.trim() === "") {
@@ -33,6 +41,23 @@ function parseNumber(env: Env, key: string, fallback: number): number {
 function parseString(env: Env, key: string, fallback: string): string {
   const value = env[key];
   return value === undefined || value.trim() === "" ? fallback : value.trim();
+}
+
+function parseBoolean(env: Env, key: string, fallback: boolean): boolean {
+  const value = env[key];
+  if (value === undefined || value.trim() === "") {
+    return fallback;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "true") {
+    return true;
+  }
+  if (normalized === "false") {
+    return false;
+  }
+
+  throw new Error(`${key} must be true or false`);
 }
 
 function parseDirection(env: Env): Direction {
@@ -86,6 +111,22 @@ export function loadConfig(env: Env = process.env): AppConfig {
     rankingTopN: parseNumber(env, "STRATEGY_RANKING_TOP_N", DEFAULT_STRATEGY.rankingTopN)
   };
 
+  const fundingRate: FundingRateConfig = {
+    enabled: parseBoolean(env, "FUNDING_RATE_ENABLED", DEFAULT_FUNDING_RATE.enabled),
+    intervalMinutes: parseNumber(
+      env,
+      "FUNDING_RATE_INTERVAL_MINUTES",
+      DEFAULT_FUNDING_RATE.intervalMinutes
+    ),
+    thresholdPct: parseNumber(
+      env,
+      "FUNDING_RATE_THRESHOLD_PCT",
+      DEFAULT_FUNDING_RATE.thresholdPct
+    ),
+    quoteCcy: parseString(env, "FUNDING_RATE_QUOTE_CCY", DEFAULT_FUNDING_RATE.quoteCcy).toUpperCase(),
+    topN: parseNumber(env, "FUNDING_RATE_TOP_N", DEFAULT_FUNDING_RATE.topN)
+  };
+
   return {
     okxBaseUrl: parseString(env, "OKX_BASE_URL", "https://www.okx.com"),
     okxApiKey: env.OKX_API_KEY?.trim() || undefined,
@@ -96,6 +137,7 @@ export function loadConfig(env: Env = process.env): AppConfig {
     telegramBotToken: env.TELEGRAM_BOT_TOKEN?.trim() || undefined,
     telegramChatId: env.TELEGRAM_CHAT_ID?.trim() || undefined,
     logLevel: parseString(env, "LOG_LEVEL", "info"),
+    fundingRate,
     strategy
   };
 }

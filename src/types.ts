@@ -15,6 +15,14 @@ export interface StrategyConfig {
   rankingTopN: number;
 }
 
+export interface FundingRateConfig {
+  enabled: boolean;
+  intervalMinutes: number;
+  thresholdPct: number;
+  quoteCcy: string;
+  topN: number;
+}
+
 export interface AppConfig {
   okxBaseUrl: string;
   okxApiKey: string | undefined;
@@ -25,7 +33,53 @@ export interface AppConfig {
   telegramBotToken: string | undefined;
   telegramChatId: string | undefined;
   logLevel: string;
+  fundingRate: FundingRateConfig;
   strategy: StrategyConfig;
+}
+
+export interface OkxSwapInstrument {
+  instType: string;
+  instId: string;
+  instFamily?: string;
+  ctType?: string;
+  settleCcy?: string;
+  state?: string;
+}
+
+export interface OkxFundingRateRow {
+  formulaType?: string;
+  fundingRate: string;
+  fundingTime: string;
+  instId: string;
+  instType: string;
+  interestRate?: string;
+  maxFundingRate?: string;
+  method?: string;
+  minFundingRate?: string;
+  nextFundingRate?: string;
+  nextFundingTime?: string;
+  premium?: string;
+  prevFundingTime?: string;
+  realizedRate?: string;
+  settFundingRate?: string;
+  settState?: string;
+  ts: string;
+}
+
+export interface FundingRateSnapshot {
+  exchange: "OKX";
+  instId: string;
+  baseCcy: string;
+  quoteCcy: string;
+  fundingRate: number;
+  fundingRatePct: number;
+  nextFundingRate: number | null;
+  nextFundingRatePct: number | null;
+  fundingTime: number;
+  nextFundingTime: number | null;
+  method: string | null;
+  ts: number;
+  rawPayload: OkxFundingRateRow;
 }
 
 export interface OkxDualInvestmentProduct {

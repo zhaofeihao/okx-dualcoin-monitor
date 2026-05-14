@@ -1,4 +1,4 @@
-import type { AlertEvaluation } from "./types.js";
+import type { AlertEvaluation, FundingRateSnapshot } from "./types.js";
 
 type FetchLike = typeof fetch;
 
@@ -10,12 +10,17 @@ function formatDate(ms: number): string {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
-function formatSignedPercent(value: number | null): string {
+function formatUtcMinute(value: Date | number): string {
+  const date = typeof value === "number" ? new Date(value) : value;
+  return date.toISOString().slice(0, 16).replace("T", " ") + " UTC";
+}
+
+function formatSignedPercent(value: number | null, digits = 2): string {
   if (value === null) {
     return "N/A";
   }
   const prefix = value >= 0 ? "+" : "";
-  return `${prefix}${value.toFixed(2)}%`;
+  return `${prefix}${value.toFixed(digits)}%`;
 }
 
 export function formatAlertMessage(evaluation: AlertEvaluation): string {
@@ -34,6 +39,34 @@ export function formatAlertMessage(evaluation: AlertEvaluation): string {
     `排名：#${evaluation.rankInExpiry}`,
     `触发原因：${evaluation.reasons.join(", ")}`,
     "建议：这是你可接受接盘区间内的异常高收益档位，可手动检查是否还有额度。"
+  ].join("\n");
+}
+
+function fundingDirection(value: number): string {
+  return value >= 0 ? "多付空收" : "空付多收";
+}
+
+function formatFundingRateLine(snapshot: FundingRateSnapshot, index: number): string {
+  const nextFundingTime =
+    snapshot.nextFundingTime === null ? "N/A" : formatUtcMinute(snapshot.nextFundingTime);
+
+  return [
+    `${index + 1}. ${snapshot.instId}  ${formatSignedPercent(snapshot.fundingRatePct, 4)}  ${fundingDirection(snapshot.fundingRatePct)}`,
+    `   下次资金：${nextFundingTime}`
+  ].join("\n");
+}
+
+export function formatFundingRateAlertMessage(input: {
+  snapshots: FundingRateSnapshot[];
+  thresholdPct: number;
+  scannedAt: Date;
+}): string {
+  return [
+    "OKX USDT 永续资金费率预警",
+    `阈值：|资金费率| > ${input.thresholdPct.toFixed(2)}%`,
+    `扫描时间：${formatUtcMinute(input.scannedAt)}`,
+    "",
+    ...input.snapshots.map((snapshot, index) => formatFundingRateLine(snapshot, index))
   ].join("\n");
 }
 
