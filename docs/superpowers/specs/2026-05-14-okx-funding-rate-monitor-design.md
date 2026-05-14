@@ -98,9 +98,9 @@ OKX USDT 永续资金费率预警
 扫描时间：2026-05-14 22:30
 
 1. BTC-USDT-SWAP  +0.3750%  多付空收
-   下次资金：2026-05-15 00:00
+   结算时间：2026-05-15 00:00
 2. XYZ-USDT-SWAP  -0.8200%  空付多收
-   下次资金：2026-05-15 00:00
+   结算时间：2026-05-15 00:00
 ```
 
 Positive funding means longs pay shorts. Negative funding means shorts pay longs.

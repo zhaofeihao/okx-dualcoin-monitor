@@ -69,7 +69,7 @@ describe("telegram", () => {
     expect(formatAlertMessage(evaluation)).toContain("Z-score：3.10");
   });
 
-  it("formats funding-rate alert summaries with direction and next funding time", () => {
+  it("formats funding-rate alert summaries with direction and settlement time", () => {
     const message = formatFundingRateAlertMessage({
       snapshots: [
         fundingSnapshot(),
@@ -91,7 +91,7 @@ describe("telegram", () => {
     expect(message).toContain("扫描时间：2026-05-14 22:30 UTC+8");
     expect(message).toContain("1. BTC-USDT-SWAP  +0.3750%  多付空收");
     expect(message).toContain("2. ETH-USDT-SWAP  -0.8200%  空付多收");
-    expect(message).toContain("下次资金：2026-05-15 08:00 UTC+8");
+    expect(message).toContain("结算时间：2026-05-15 00:00 UTC+8");
   });
 
   it("does not send when credentials are missing", async () => {

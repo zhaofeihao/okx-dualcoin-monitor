@@ -63,14 +63,11 @@ function formatFundingRateLine(
   timeZone: string,
   timeZoneLabel: string
 ): string {
-  const nextFundingTime =
-    snapshot.nextFundingTime === null
-      ? "N/A"
-      : formatZonedMinute(snapshot.nextFundingTime, timeZone, timeZoneLabel);
+  const fundingTime = formatZonedMinute(snapshot.fundingTime, timeZone, timeZoneLabel);
 
   return [
     `${index + 1}. ${snapshot.instId}  ${formatSignedPercent(snapshot.fundingRatePct, 4)}  ${fundingDirection(snapshot.fundingRatePct)}`,
-    `   下次资金：${nextFundingTime}`
+    `   结算时间：${fundingTime}`
   ].join("\n");
 }
 
