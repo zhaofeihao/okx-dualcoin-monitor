@@ -10,9 +10,20 @@ function formatDate(ms: number): string {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
-function formatUtcMinute(value: Date | number): string {
+function formatZonedMinute(value: Date | number, timeZone: string, timeZoneLabel: string): string {
   const date = typeof value === "number" ? new Date(value) : value;
-  return date.toISOString().slice(0, 16).replace("T", " ") + " UTC";
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(date);
+  const partMap = new Map(parts.map((part) => [part.type, part.value]));
+
+  return `${partMap.get("year")}-${partMap.get("month")}-${partMap.get("day")} ${partMap.get("hour")}:${partMap.get("minute")} ${timeZoneLabel}`;
 }
 
 function formatSignedPercent(value: number | null, digits = 2): string {
@@ -46,9 +57,16 @@ function fundingDirection(value: number): string {
   return value >= 0 ? "多付空收" : "空付多收";
 }
 
-function formatFundingRateLine(snapshot: FundingRateSnapshot, index: number): string {
+function formatFundingRateLine(
+  snapshot: FundingRateSnapshot,
+  index: number,
+  timeZone: string,
+  timeZoneLabel: string
+): string {
   const nextFundingTime =
-    snapshot.nextFundingTime === null ? "N/A" : formatUtcMinute(snapshot.nextFundingTime);
+    snapshot.nextFundingTime === null
+      ? "N/A"
+      : formatZonedMinute(snapshot.nextFundingTime, timeZone, timeZoneLabel);
 
   return [
     `${index + 1}. ${snapshot.instId}  ${formatSignedPercent(snapshot.fundingRatePct, 4)}  ${fundingDirection(snapshot.fundingRatePct)}`,
@@ -60,13 +78,20 @@ export function formatFundingRateAlertMessage(input: {
   snapshots: FundingRateSnapshot[];
   thresholdPct: number;
   scannedAt: Date;
+  timeZone?: string;
+  timeZoneLabel?: string;
 }): string {
+  const timeZone = input.timeZone ?? "Asia/Shanghai";
+  const timeZoneLabel = input.timeZoneLabel ?? "UTC+8";
+
   return [
     "OKX USDT 永续资金费率预警",
     `阈值：|资金费率| > ${input.thresholdPct.toFixed(2)}%`,
-    `扫描时间：${formatUtcMinute(input.scannedAt)}`,
+    `扫描时间：${formatZonedMinute(input.scannedAt, timeZone, timeZoneLabel)}`,
     "",
-    ...input.snapshots.map((snapshot, index) => formatFundingRateLine(snapshot, index))
+    ...input.snapshots.map((snapshot, index) =>
+      formatFundingRateLine(snapshot, index, timeZone, timeZoneLabel)
+    )
   ].join("\n");
 }
 

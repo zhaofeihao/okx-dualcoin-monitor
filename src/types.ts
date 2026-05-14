@@ -21,6 +21,8 @@ export interface FundingRateConfig {
   thresholdPct: number;
   quoteCcy: string;
   topN: number;
+  timeZone: string;
+  timeZoneLabel: string;
 }
 
 export interface AppConfig {

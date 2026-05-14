@@ -23,7 +23,9 @@ const DEFAULT_FUNDING_RATE: FundingRateConfig = {
   intervalMinutes: 30,
   thresholdPct: 0.3,
   quoteCcy: "USDT",
-  topN: 20
+  topN: 20,
+  timeZone: "Asia/Shanghai",
+  timeZoneLabel: "UTC+8"
 };
 
 function parseNumber(env: Env, key: string, fallback: number): number {
@@ -124,7 +126,13 @@ export function loadConfig(env: Env = process.env): AppConfig {
       DEFAULT_FUNDING_RATE.thresholdPct
     ),
     quoteCcy: parseString(env, "FUNDING_RATE_QUOTE_CCY", DEFAULT_FUNDING_RATE.quoteCcy).toUpperCase(),
-    topN: parseNumber(env, "FUNDING_RATE_TOP_N", DEFAULT_FUNDING_RATE.topN)
+    topN: parseNumber(env, "FUNDING_RATE_TOP_N", DEFAULT_FUNDING_RATE.topN),
+    timeZone: parseString(env, "FUNDING_RATE_TIME_ZONE", DEFAULT_FUNDING_RATE.timeZone),
+    timeZoneLabel: parseString(
+      env,
+      "FUNDING_RATE_TIME_ZONE_LABEL",
+      DEFAULT_FUNDING_RATE.timeZoneLabel
+    )
   };
 
   return {

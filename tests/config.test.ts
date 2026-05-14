@@ -13,7 +13,9 @@ describe("loadConfig", () => {
       intervalMinutes: 30,
       thresholdPct: 0.3,
       quoteCcy: "USDT",
-      topN: 20
+      topN: 20,
+      timeZone: "Asia/Shanghai",
+      timeZoneLabel: "UTC+8"
     });
     expect(config.strategy).toEqual({
       asset: "ETH",
@@ -43,7 +45,9 @@ describe("loadConfig", () => {
       FUNDING_RATE_INTERVAL_MINUTES: "45",
       FUNDING_RATE_THRESHOLD_PCT: "0.45",
       FUNDING_RATE_QUOTE_CCY: "usdt",
-      FUNDING_RATE_TOP_N: "8"
+      FUNDING_RATE_TOP_N: "8",
+      FUNDING_RATE_TIME_ZONE: "Asia/Tokyo",
+      FUNDING_RATE_TIME_ZONE_LABEL: "UTC+9"
     });
 
     expect(config.sqlitePath).toBe("/tmp/monitor.sqlite");
@@ -57,7 +61,9 @@ describe("loadConfig", () => {
       intervalMinutes: 45,
       thresholdPct: 0.45,
       quoteCcy: "USDT",
-      topN: 8
+      topN: 8,
+      timeZone: "Asia/Tokyo",
+      timeZoneLabel: "UTC+9"
     });
   });
 

@@ -19,6 +19,8 @@ function config(overrides: Partial<AppConfig["fundingRate"]> = {}): AppConfig {
       thresholdPct: 0.3,
       quoteCcy: "USDT",
       topN: 20,
+      timeZone: "Asia/Shanghai",
+      timeZoneLabel: "UTC+8",
       ...overrides
     },
     strategy: {

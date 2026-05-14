@@ -28,6 +28,8 @@ Funding-rate settings:
 - `FUNDING_RATE_THRESHOLD_PCT`: alert threshold in percentage points. `0.3` means `0.3%`; OKX API value `0.003` is displayed as `0.3%`.
 - `FUNDING_RATE_QUOTE_CCY`: quote currency to monitor. Defaults to `USDT`; the first version only scans USDT-margined linear swaps.
 - `FUNDING_RATE_TOP_N`: maximum number of contracts included in one Telegram summary.
+- `FUNDING_RATE_TIME_ZONE`: display time zone for funding-rate alerts. Defaults to `Asia/Shanghai`.
+- `FUNDING_RATE_TIME_ZONE_LABEL`: display label appended to alert times. Defaults to `UTC+8`.
 
 ## Run Once
 

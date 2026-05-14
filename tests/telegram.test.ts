@@ -81,15 +81,17 @@ describe("telegram", () => {
         })
       ],
       thresholdPct: 0.3,
-      scannedAt: new Date("2026-05-14T14:30:00.000Z")
+      scannedAt: new Date("2026-05-14T14:30:00.000Z"),
+      timeZone: "Asia/Shanghai",
+      timeZoneLabel: "UTC+8"
     });
 
     expect(message).toContain("OKX USDT 永续资金费率预警");
     expect(message).toContain("阈值：|资金费率| > 0.30%");
-    expect(message).toContain("扫描时间：2026-05-14 14:30 UTC");
+    expect(message).toContain("扫描时间：2026-05-14 22:30 UTC+8");
     expect(message).toContain("1. BTC-USDT-SWAP  +0.3750%  多付空收");
     expect(message).toContain("2. ETH-USDT-SWAP  -0.8200%  空付多收");
-    expect(message).toContain("下次资金：2026-05-15 00:00 UTC");
+    expect(message).toContain("下次资金：2026-05-15 08:00 UTC+8");
   });
 
   it("does not send when credentials are missing", async () => {

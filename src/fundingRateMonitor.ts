@@ -47,7 +47,9 @@ export async function runFundingRateMonitorCycle(
   const message = formatFundingRateAlertMessage({
     snapshots: alerts,
     thresholdPct: config.fundingRate.thresholdPct,
-    scannedAt: deps.now?.() ?? new Date()
+    scannedAt: deps.now?.() ?? new Date(),
+    timeZone: config.fundingRate.timeZone,
+    timeZoneLabel: config.fundingRate.timeZoneLabel
   });
   const sent = await deps.notifier.send(message);
 
