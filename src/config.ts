@@ -137,6 +137,7 @@ export function loadConfig(env: Env = process.env): AppConfig {
 
   return {
     okxBaseUrl: parseString(env, "OKX_BASE_URL", "https://www.okx.com"),
+    binanceBaseUrl: parseString(env, "BINANCE_BASE_URL", "https://fapi.binance.com"),
     okxApiKey: env.OKX_API_KEY?.trim() || undefined,
     okxSecretKey: env.OKX_SECRET_KEY?.trim() || undefined,
     okxPassphrase: env.OKX_PASSPHRASE?.trim() || undefined,

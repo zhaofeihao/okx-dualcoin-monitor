@@ -5,6 +5,7 @@ import type { AppConfig, FundingRateSnapshot } from "../src/types.js";
 function config(overrides: Partial<AppConfig["fundingRate"]> = {}): AppConfig {
   return {
     okxBaseUrl: "https://www.okx.com",
+    binanceBaseUrl: "https://fapi.binance.com",
     okxApiKey: undefined,
     okxSecretKey: undefined,
     okxPassphrase: undefined,
@@ -80,7 +81,7 @@ describe("fundingRateMonitor", () => {
       sent: true
     });
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0]?.[0]).toContain("ETH-USDT-SWAP  -0.8000%  空付多收");
+    expect(send.mock.calls[0]?.[0]).toContain("OKX ETH-USDT-SWAP  -0.8000%  空付多收");
   });
 
   it("does not send when no snapshot exceeds the threshold", async () => {
@@ -98,5 +99,36 @@ describe("fundingRateMonitor", () => {
       sent: false
     });
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it("combines OKX and Binance snapshots into one funding-rate summary", async () => {
+    const send = vi.fn().mockResolvedValue(true);
+
+    const result = await runFundingRateMonitorCycle(config(), {
+      client: {} as never,
+      binanceClient: {} as never,
+      notifier: { send },
+      fetchOkxSnapshots: async () => [snapshot({ instId: "BTC-USDT-SWAP", fundingRatePct: 0.4 })],
+      fetchBinanceSnapshots: async () => [
+        snapshot({
+          exchange: "BINANCE",
+          instId: "ETHUSDT",
+          baseCcy: "ETH",
+          fundingRate: -0.006,
+          fundingRatePct: -0.6,
+          rawPayload: {} as FundingRateSnapshot["rawPayload"]
+        })
+      ],
+      now: () => new Date("2026-05-14T14:30:00.000Z")
+    });
+
+    expect(result).toEqual({
+      fetchedSnapshots: 2,
+      alerts: 2,
+      sent: true
+    });
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0]?.[0]).toContain("1. BINANCE ETHUSDT  -0.6000%  空付多收");
+    expect(send.mock.calls[0]?.[0]).toContain("2. OKX BTC-USDT-SWAP  +0.4000%  多付空收");
   });
 });

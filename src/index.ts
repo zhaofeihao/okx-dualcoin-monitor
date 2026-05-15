@@ -1,5 +1,6 @@
 import { loadConfig } from "./config.js";
 import { createRepository } from "./db.js";
+import { BinanceClient } from "./binanceClient.js";
 import { OkxClient } from "./okxClient.js";
 import { TelegramNotifier } from "./telegram.js";
 import { runMonitorCycle } from "./monitor.js";
@@ -26,6 +27,7 @@ function okxCredentials() {
 }
 
 const client = new OkxClient(config.okxBaseUrl, fetch, okxCredentials());
+const binanceClient = new BinanceClient(config.binanceBaseUrl, fetch);
 const notifier = new TelegramNotifier(config.telegramBotToken, config.telegramChatId);
 
 async function runDualInvestmentOnce(): Promise<void> {
@@ -48,7 +50,7 @@ async function runFundingRatesOnce(): Promise<void> {
 
   try {
     console.log(`[funding-rate] cycle start ${new Date().toISOString()}`);
-    const result = await runFundingRateMonitorCycle(config, { client, notifier });
+    const result = await runFundingRateMonitorCycle(config, { client, binanceClient, notifier });
     console.log(
       `[funding-rate] cycle complete fetched=${result.fetchedSnapshots} alerts=${result.alerts} sent=${result.sent}`
     );

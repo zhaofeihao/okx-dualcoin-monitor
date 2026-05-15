@@ -1,6 +1,6 @@
 # OKX Dualcoin Monitor
 
-TypeScript service for monitoring OKX Dual Investment ETH/USDT Buy Low opportunities and OKX USDT-margined perpetual funding-rate extremes. It records Dual Investment product snapshots in SQLite, detects APR anomalies by strike and expiry, and sends Telegram alerts. It also polls public perpetual funding rates and sends a summary when `|fundingRate|` is above the configured threshold. The service is monitoring-only and does not place orders.
+TypeScript service for monitoring OKX Dual Investment ETH/USDT Buy Low opportunities plus OKX and Binance USDT-margined perpetual funding-rate extremes. It records Dual Investment product snapshots in SQLite, detects APR anomalies by strike and expiry, and sends Telegram alerts. It also polls public perpetual funding rates and sends a summary when `|fundingRate|` is above the configured threshold. The service is monitoring-only and does not place orders.
 
 ## Setup
 
@@ -23,10 +23,11 @@ Key settings:
 
 Funding-rate settings:
 
-- `FUNDING_RATE_ENABLED`: enable/disable OKX perpetual funding-rate monitoring. Defaults to `true`.
+- `BINANCE_BASE_URL`: Binance USD-S-M Futures API base URL. Defaults to `https://fapi.binance.com`.
+- `FUNDING_RATE_ENABLED`: enable/disable OKX and Binance perpetual funding-rate monitoring. Defaults to `true`.
 - `FUNDING_RATE_INTERVAL_MINUTES`: funding-rate polling interval. Defaults to `30`.
-- `FUNDING_RATE_THRESHOLD_PCT`: alert threshold in percentage points. `0.3` means `0.3%`; OKX API value `0.003` is displayed as `0.3%`.
-- `FUNDING_RATE_QUOTE_CCY`: quote currency to monitor. Defaults to `USDT`; the first version only scans USDT-margined linear swaps.
+- `FUNDING_RATE_THRESHOLD_PCT`: alert threshold in percentage points. `0.3` means `0.3%`; exchange API value `0.003` is displayed as `0.3%`.
+- `FUNDING_RATE_QUOTE_CCY`: quote currency to monitor. Defaults to `USDT`; scans OKX linear swaps and Binance USD-S-M perpetual contracts matching this quote currency.
 - `FUNDING_RATE_TOP_N`: maximum number of contracts included in one Telegram summary.
 - `FUNDING_RATE_TIME_ZONE`: display time zone for funding-rate alerts. Defaults to `Asia/Shanghai`.
 - `FUNDING_RATE_TIME_ZONE_LABEL`: display label appended to alert times. Defaults to `UTC+8`.
@@ -80,5 +81,6 @@ Funding-rate alerts are not persisted in SQLite in this version. Each funding-ra
 - Buy Low maps to OKX Dual Investment `optType=P`.
 - Spot price is fetched from `GET /api/v5/market/ticker?instId=ETH-USDT`.
 - Product snapshots are fetched from `GET /api/v5/finance/sfp/dcd/products?baseCcy=ETH&quoteCcy=USDT&optType=P`; OKX currently requires signed API headers for this endpoint.
-- USDT perpetual instruments are fetched from `GET /api/v5/public/instruments?instType=SWAP`, then current funding is fetched from `GET /api/v5/public/funding-rate?instId=...`.
+- OKX USDT perpetual instruments are fetched from `GET /api/v5/public/instruments?instType=SWAP`, then current funding is fetched from `GET /api/v5/public/funding-rate?instId=...`.
+- Binance USD-S-M perpetual symbols are fetched from `GET /fapi/v1/exchangeInfo`, then current funding is fetched from `GET /fapi/v1/premiumIndex`.
 - The service intentionally avoids OKX trading endpoints in the MVP.

@@ -6,6 +6,7 @@ describe("loadConfig", () => {
     const config = loadConfig({});
 
     expect(config.okxBaseUrl).toBe("https://www.okx.com");
+    expect(config.binanceBaseUrl).toBe("https://fapi.binance.com");
     expect(config.sqlitePath).toBe("./data/okx-dualcoin-monitor.sqlite");
     expect(config.pollIntervalMinutes).toBe(15);
     expect(config.fundingRate).toEqual({
@@ -36,6 +37,7 @@ describe("loadConfig", () => {
   it("parses numeric strategy overrides and acceptable strikes", () => {
     const config = loadConfig({
       SQLITE_PATH: "/tmp/monitor.sqlite",
+      BINANCE_BASE_URL: "https://example.binance.test",
       POLL_INTERVAL_MINUTES: "5",
       STRATEGY_ACCEPTABLE_STRIKES: "2600,2700.5, 2800",
       STRATEGY_MIN_APR: "42",
@@ -51,6 +53,7 @@ describe("loadConfig", () => {
     });
 
     expect(config.sqlitePath).toBe("/tmp/monitor.sqlite");
+    expect(config.binanceBaseUrl).toBe("https://example.binance.test");
     expect(config.pollIntervalMinutes).toBe(5);
     expect(config.strategy.acceptableStrikes).toEqual([2600, 2700.5, 2800]);
     expect(config.strategy.minApr).toBe(42);

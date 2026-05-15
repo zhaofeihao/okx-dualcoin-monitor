@@ -66,7 +66,7 @@ function formatFundingRateLine(
   const fundingTime = formatZonedMinute(snapshot.fundingTime, timeZone, timeZoneLabel);
 
   return [
-    `${index + 1}. ${snapshot.instId}  ${formatSignedPercent(snapshot.fundingRatePct, 4)}  ${fundingDirection(snapshot.fundingRatePct)}`,
+    `${index + 1}. ${snapshot.exchange} ${snapshot.instId}  ${formatSignedPercent(snapshot.fundingRatePct, 4)}  ${fundingDirection(snapshot.fundingRatePct)}`,
     `   结算时间：${fundingTime}`
   ].join("\n");
 }
@@ -82,7 +82,7 @@ export function formatFundingRateAlertMessage(input: {
   const timeZoneLabel = input.timeZoneLabel ?? "UTC+8";
 
   return [
-    "OKX USDT 永续资金费率预警",
+    "USDT 永续资金费率预警",
     `阈值：|资金费率| > ${input.thresholdPct.toFixed(2)}%`,
     `扫描时间：${formatZonedMinute(input.scannedAt, timeZone, timeZoneLabel)}`,
     "",

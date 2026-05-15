@@ -27,6 +27,7 @@ export interface FundingRateConfig {
 
 export interface AppConfig {
   okxBaseUrl: string;
+  binanceBaseUrl: string;
   okxApiKey: string | undefined;
   okxSecretKey: string | undefined;
   okxPassphrase: string | undefined;
@@ -68,8 +69,33 @@ export interface OkxFundingRateRow {
   ts: string;
 }
 
+export interface BinanceSymbolInfo {
+  symbol: string;
+  pair: string;
+  contractType: string;
+  status: string;
+  baseAsset: string;
+  quoteAsset: string;
+  marginAsset: string;
+}
+
+export interface BinanceExchangeInfo {
+  symbols: BinanceSymbolInfo[];
+}
+
+export interface BinancePremiumIndexRow {
+  symbol: string;
+  markPrice: string;
+  indexPrice: string;
+  estimatedSettlePrice?: string;
+  lastFundingRate: string;
+  interestRate: string;
+  nextFundingTime: number;
+  time: number;
+}
+
 export interface FundingRateSnapshot {
-  exchange: "OKX";
+  exchange: "OKX" | "BINANCE";
   instId: string;
   baseCcy: string;
   quoteCcy: string;
@@ -81,7 +107,7 @@ export interface FundingRateSnapshot {
   nextFundingTime: number | null;
   method: string | null;
   ts: number;
-  rawPayload: OkxFundingRateRow;
+  rawPayload: OkxFundingRateRow | BinancePremiumIndexRow;
 }
 
 export interface OkxDualInvestmentProduct {
