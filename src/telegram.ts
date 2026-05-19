@@ -53,10 +53,6 @@ export function formatAlertMessage(evaluation: AlertEvaluation): string {
   ].join("\n");
 }
 
-function fundingDirection(value: number): string {
-  return value >= 0 ? "多付空收" : "空付多收";
-}
-
 function formatFundingRateLine(
   snapshot: FundingRateSnapshot,
   index: number,
@@ -64,9 +60,10 @@ function formatFundingRateLine(
   timeZoneLabel: string
 ): string {
   const fundingTime = formatZonedMinute(snapshot.fundingTime, timeZone, timeZoneLabel);
+  const fundingRate = `<b>${formatSignedPercent(snapshot.fundingRatePct, 4)}</b>`;
 
   return [
-    `${index + 1}. ${snapshot.exchange} ${snapshot.instId}  ${formatSignedPercent(snapshot.fundingRatePct, 4)}  ${fundingDirection(snapshot.fundingRatePct)}`,
+    `${index + 1}. ${snapshot.exchange} ${snapshot.instId}  ${fundingRate}`,
     `   结算时间：${fundingTime}`
   ].join("\n");
 }
@@ -117,7 +114,8 @@ export class TelegramNotifier {
         body: JSON.stringify({
           chat_id: this.chatId,
           text: message,
-          disable_web_page_preview: true
+          disable_web_page_preview: true,
+          parse_mode: "HTML"
         })
       }
     );

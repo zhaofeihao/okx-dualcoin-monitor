@@ -69,7 +69,7 @@ describe("telegram", () => {
     expect(formatAlertMessage(evaluation)).toContain("Z-score：3.10");
   });
 
-  it("formats funding-rate alert summaries with direction and settlement time", () => {
+  it("formats funding-rate alert summaries with bold rates and settlement time", () => {
     const message = formatFundingRateAlertMessage({
       snapshots: [
         fundingSnapshot(),
@@ -89,8 +89,10 @@ describe("telegram", () => {
     expect(message).toContain("USDT 永续资金费率预警");
     expect(message).toContain("阈值：|资金费率| > 0.30%");
     expect(message).toContain("扫描时间：2026-05-14 22:30 UTC+8");
-    expect(message).toContain("1. OKX BTC-USDT-SWAP  +0.3750%  多付空收");
-    expect(message).toContain("2. OKX ETH-USDT-SWAP  -0.8200%  空付多收");
+    expect(message).toContain("1. OKX BTC-USDT-SWAP  <b>+0.3750%</b>");
+    expect(message).toContain("2. OKX ETH-USDT-SWAP  <b>-0.8200%</b>");
+    expect(message).not.toContain("多付空收");
+    expect(message).not.toContain("空付多收");
     expect(message).toContain("结算时间：2026-05-15 00:00 UTC+8");
   });
 
@@ -113,8 +115,10 @@ describe("telegram", () => {
     });
 
     expect(message).toContain("USDT 永续资金费率预警");
-    expect(message).toContain("1. OKX BTC-USDT-SWAP  +0.3750%  多付空收");
-    expect(message).toContain("2. BINANCE ETHUSDT  -0.8200%  空付多收");
+    expect(message).toContain("1. OKX BTC-USDT-SWAP  <b>+0.3750%</b>");
+    expect(message).toContain("2. BINANCE ETHUSDT  <b>-0.8200%</b>");
+    expect(message).not.toContain("多付空收");
+    expect(message).not.toContain("空付多收");
   });
 
   it("does not send when credentials are missing", async () => {
@@ -138,7 +142,15 @@ describe("telegram", () => {
     await expect(notifier.send("hello")).resolves.toBe(true);
     expect(fetchMock).toHaveBeenCalledWith(
       "https://api.telegram.org/bottoken/sendMessage",
-      expect.objectContaining({ method: "POST" })
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          chat_id: "chat",
+          text: "hello",
+          disable_web_page_preview: true,
+          parse_mode: "HTML"
+        })
+      })
     );
   });
 });
