@@ -89,8 +89,8 @@ describe("telegram", () => {
     expect(message).toContain("USDT 永续资金费率预警");
     expect(message).toContain("阈值：|资金费率| > 0.30%");
     expect(message).toContain("扫描时间：2026-05-14 22:30 UTC+8");
-    expect(message).toContain("1. OKX BTC-USDT-SWAP  <b>+0.3750%</b>");
-    expect(message).toContain("2. OKX ETH-USDT-SWAP  <b>-0.8200%</b>");
+    expect(message).toContain("1. OKX BTC-USDT-SWAP  🟢 <b>+0.3750%</b>");
+    expect(message).toContain("2. OKX ETH-USDT-SWAP  🔴 <b>-0.8200%</b>");
     expect(message).not.toContain("多付空收");
     expect(message).not.toContain("空付多收");
     expect(message).toContain("结算时间：2026-05-15 00:00 UTC+8");
@@ -115,8 +115,8 @@ describe("telegram", () => {
     });
 
     expect(message).toContain("USDT 永续资金费率预警");
-    expect(message).toContain("1. OKX BTC-USDT-SWAP  <b>+0.3750%</b>");
-    expect(message).toContain("2. BINANCE ETHUSDT  <b>-0.8200%</b>");
+    expect(message).toContain("1. OKX BTC-USDT-SWAP  🟢 <b>+0.3750%</b>");
+    expect(message).toContain("2. BINANCE ETHUSDT  🔴 <b>-0.8200%</b>");
     expect(message).not.toContain("多付空收");
     expect(message).not.toContain("空付多收");
   });

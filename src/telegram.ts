@@ -60,7 +60,8 @@ function formatFundingRateLine(
   timeZoneLabel: string
 ): string {
   const fundingTime = formatZonedMinute(snapshot.fundingTime, timeZone, timeZoneLabel);
-  const fundingRate = `<b>${formatSignedPercent(snapshot.fundingRatePct, 4)}</b>`;
+  const fundingRateMarker = snapshot.fundingRatePct >= 0 ? "🟢" : "🔴";
+  const fundingRate = `${fundingRateMarker} <b>${formatSignedPercent(snapshot.fundingRatePct, 4)}</b>`;
 
   return [
     `${index + 1}. ${snapshot.exchange} ${snapshot.instId}  ${fundingRate}`,

@@ -81,7 +81,7 @@ describe("fundingRateMonitor", () => {
       sent: true
     });
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0]?.[0]).toContain("OKX ETH-USDT-SWAP  <b>-0.8000%</b>");
+    expect(send.mock.calls[0]?.[0]).toContain("OKX ETH-USDT-SWAP  🔴 <b>-0.8000%</b>");
     expect(send.mock.calls[0]?.[0]).not.toContain("空付多收");
   });
 
@@ -129,8 +129,8 @@ describe("fundingRateMonitor", () => {
       sent: true
     });
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0]?.[0]).toContain("1. BINANCE ETHUSDT  <b>-0.6000%</b>");
-    expect(send.mock.calls[0]?.[0]).toContain("2. OKX BTC-USDT-SWAP  <b>+0.4000%</b>");
+    expect(send.mock.calls[0]?.[0]).toContain("1. BINANCE ETHUSDT  🔴 <b>-0.6000%</b>");
+    expect(send.mock.calls[0]?.[0]).toContain("2. OKX BTC-USDT-SWAP  🟢 <b>+0.4000%</b>");
     expect(send.mock.calls[0]?.[0]).not.toContain("空付多收");
     expect(send.mock.calls[0]?.[0]).not.toContain("多付空收");
   });
